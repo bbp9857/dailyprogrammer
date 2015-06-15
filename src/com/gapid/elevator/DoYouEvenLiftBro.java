@@ -1,3 +1,4 @@
+// https://www.reddit.com/r/dailyprogrammer/comments/39ixxi/20150612_challenge_218_hard_elevator_scheduling/cs5rarl
 package com.gapid.elevator;
 
 import java.io.*;
@@ -6,8 +7,9 @@ import java.util.*;
 import static java.util.stream.Collectors.*;
 import static java.util.Comparator.comparing;
 
+
 public class DoYouEvenLiftBro {
-    static int maxFloor, minFloor, LINGER_TIME = 1;
+    static int maxFloor, minFloor, LINGER_TIME = 0;
     public static void main(String[] args) throws IOException, InterruptedException {
         args = new String[]{"riders.txt"};
         Path fileName = new File(args[0]).toPath();
@@ -18,7 +20,6 @@ public class DoYouEvenLiftBro {
                 .collect(groupingBy(e -> e.time, toList()));
         maxFloor = presses.values().stream().flatMap(l->l.stream().map(p->Integer.max(p.dest, p.source)))
                 .max(Integer::compare).get();
-        System.out.println(maxFloor);
         minFloor = 1;
         int maxTime = presses.keySet().stream().max(Integer::compare).get(), time = -1;
         List<Call> queued = new ArrayList<>(), space = new ArrayList<>();
@@ -120,7 +121,7 @@ class Elevator {
     public void advance() {
         if (isIdle()) {return;}
         if (linger > 0) { linger --; System.out.println("Elevator " + name + " is lingering"); return;}
-        lastFloor = floor;  // (int) (direction== D.DOWN ? Math.ceil(floor) : (int)floor);
+        lastFloor = floor;
         floor += speed * direction.factor;
         floor = (int) (Math.round(floor * 100));
         floor = floor / 100;
@@ -143,7 +144,7 @@ class Elevator {
 
     public double getTimeTo(Call call) {
         if (Math.abs((double) call.source - floor) < 1) return 0;
-
+        if (riders.size() == capacity) return (DoYouEvenLiftBro.maxFloor * 2 ) / speed;
         if (isHeadedTowards(call.source) || isIdle()) {
             if (getDirectionTo(call.source) == call.direction)
                 return (call.source - floor) / speed;
@@ -183,12 +184,12 @@ class Call {
         this.source = source; this.direction = direction; this.time = time;
     }
 
+    void incrementQueueTime() { queueTime++; }
     void incrementRidingTime() { rideTime++; }
     public boolean equals(Object p) {
-        return this.source == ((Call) p).source
-                && this.direction == ((Call) p).direction && this.time == ((Call) p).time;
+        Call p2 = (Call) p;
+        return this.source == p2.source && direction == p2.direction && time == p2.time && dest == p2.dest;
     }
-    void incrementQueueTime() { queueTime++; }
 }
 
 enum D {IDLE(0), UP(1), DOWN(-1); public double factor; D(int i) {this.factor = i;} }

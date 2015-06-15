@@ -1,3 +1,4 @@
+// https://www.reddit.com/r/dailyprogrammer/comments/398mtv/20150610_challenge_218_intermediate_generating/cs1lbvq
 package com.gapid.polyominos;
 
 import java.util.*;

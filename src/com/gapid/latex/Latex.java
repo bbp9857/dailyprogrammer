@@ -1,7 +1,7 @@
 package com.gapid.latex;
 
 import java.util.*;
-
+// https://www.reddit.com/r/dailyprogrammer/comments/38nhgx/20150605_challenge_217_practical_exercise_texscii/crx3ys9
 public class Latex {
 	public static void main(String[] args) {  new Latex().go(args[0]); }
 	List<Token> tokens; private Token currentToken;
